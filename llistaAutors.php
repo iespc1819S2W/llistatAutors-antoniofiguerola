@@ -42,21 +42,39 @@
     <title>Llista Autors</title>
 </head>
 <body>
-    <form action="" method="Post">
+    <form action="" method="post">
+        <div class="form-group">
+        <input type="hidden" class="form-control" name="ordre" id="ordre" value="<?=$orderBy?>">
         <button name="ID_AUT_ASC" class="btn btn-primary">CODI ASC</button>
         <button name="ID_AUT_DESC" class="btn btn-primary">CODI DES</button>
         <button name="NOM_AUT_ASC" class="btn btn-primary">NOM ASC</button>
         <button name="NOM_AUT_DESC" class="btn btn-primary">NOM DES</button>
+        </div>
         <div class="form-group">
-            <label for="">Codi / Nom</label>
-            <input type="text" class="form-control" name="cercar" id="cercar" aria-describedby="helpId" placeholder="">
-            <button name="btnCercar" class="btn btn-primary">Buscar</button>
+        <label for="">Codi / Nom</label>
+        <input type="text" class="form-control" name="cercar" id="cercar" aria-describedby="helpId" placeholder="Cerca">
+        <button name="btnCercar" class="btn btn-primary">Buscar</button>
         </div>
     </form>
+    <!-- <form class="form-inline" action="" method="Post">
+        <div class="container-fluid">
+            <button name="ID_AUT_ASC" class="btn btn-primary">CODI ASC</button>
+            <button name="ID_AUT_DESC" class="btn btn-primary">CODI DES</button>
+            <button name="NOM_AUT_ASC" class="btn btn-primary">NOM ASC</button>
+            <button name="NOM_AUT_DESC" class="btn btn-primary">NOM DES</button>
+        </div>
+        <div class="container-fluid">
+            <label for="">Codi / Nom</label>
+            <input type="text" class="form-control" name="cercar" id="cercar" aria-describedby="helpId" placeholder="Cerca">
+            <button name="btnCercar" class="btn btn-primary">Buscar</button>
+        </div>
+        <div class="container-fluid">
+            <button name="btnSeguent" class="btn btn-primary">Seguent</button>
+        </div>
+    </form> -->
     <table class="table">
         <thead class="thead-dark">
             <tr>
-                <!-- <th scope="col"><img src="descarga.jpg" width="125" height="100"></th> -->
                 <th scope="col"></th>
                 <th scope="col">BIBLIOTECA</th>
             </tr>
@@ -78,15 +96,13 @@
                 echo("<p>$sql</p>");
                 $result = $mysqli->query($sql);
                 if ($result) {
-                    // printf("Select returned %d rows.\n", $result->num_rows);
-                    /* fetch associative array */
-
-                    $pagina=2;  // del botón...
-                    $numRegPagina=5; // del select
+                    $pagina=0;  // del botón...
+                    $numRegPagina=10; // del select
 
                     $dir=$pagina*$numRegPagina;
                     $actual=0;
                     $offset=0;
+                    $pagina = ceil($pagina/$numRegPagina);
 
                     while ($row = $result->fetch_assoc()) {
                         if($actual>=$dir){
