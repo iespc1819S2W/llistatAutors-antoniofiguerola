@@ -56,6 +56,11 @@
     if (isset($_POST['pagDarrera'])) {
             $pagina = $_POST['numPagines'];
     }
+
+    if ((isset($_POST['pagAnteriorDos']) || isset($_POST['pagAnteriorUn']) || 
+            isset($_POST['pagActual']) || isset($_POST['pagSeguentUn']) || isset($_POST['pagSeguentDos']))) {
+            $pagina = $_POST['pagina'];
+    }
     // echo($_POST['pagina']);
 
 ?>
@@ -123,6 +128,17 @@
                     <button name="pagAnterior" class="btn btn-primary">Anterior</button>
                     <button name="pagSeguent" class="btn btn-primary">Seguent</button>
                     <button name="pagDarrera" class="btn btn-primary">Darrera</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 order-md-1">
+                <div class="col-md-6 mb-3">
+                    <button name="pagAnteriorDos" class="btn btn-primary"><?=$pagina-2?></button>
+                    <button name="pagAnteriorUn" class="btn btn-primary"><?=$pagina-1?></button>
+                    <button name="pagActual" class="btn btn-primary"><?=$pagina?></button>
+                    <button name="pagSeguentUn" class="btn btn-primary"><?=$pagina+1?></button>
+                    <button name="pagSeguentDos" class="btn btn-primary"><?=$pagina+2?></button>
                 </div>
             </div>
         </div>
