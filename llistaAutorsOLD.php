@@ -10,53 +10,19 @@
     If (!$mysqli){ 
         echo "Connection error: " . mysqli_connect_error();
     }
-    
-    if (isset($_POST['ordre'])) {
-        $ordre = $_POST['ordre'];
-    } else {
-        $ordre = "NOM_AUT ASC"; // variable per pasar al Select
-    }
-
-    if (isset($_POST['pagina'])) {
-        $pagina = $_POST['pagina'];
-    } else {
-        $pagina = 1;
-    }
-
-    if(isset($_POST['ID_AUT_ASC'])) { // 4 botones ordenacion
-        $ordre = "ID_AUT ASC";
-        $pagina = 1;
+    $orderBy = "NOM_AUT ASC"; // variable per pasar al Select
+    if(isset($_POST['ID_AUT_ASC'])) {
+        $orderBy = "ID_AUT ASC";
     }
     if(isset($_POST['ID_AUT_DESC'])) {
-        $ordre = "ID_AUT DESC";
-        $pagina = 1;
+        $orderBy = "ID_AUT DESC";
     }
     if(isset($_POST['NOM_AUT_DESC'])) {
-        $ordre = "NOM_AUT DESC";
-        $pagina = 1;
+        $orderBy = "NOM_AUT DESC";
     }
     if(isset($_POST['NOM_AUT_ASC'])) {
-        $ordre = "NOM_AUT ASC";
-        $pagina = 1;
+        $orderBy = "NOM_AUT ASC";
     }
-
-    if (isset($_POST['pagAnterior'])) { // botones cambiar pagina
-        if ($pagina > 1) {
-            $pagina--;
-        }
-    }
-    if (isset($_POST['pagSeguent'])) {
-        if ($pagina < $_POST['numPagines']) {
-            $pagina++;
-        }
-    }
-    if (isset($_POST['pagPrimera'])) {
-            $pagina = 1;
-    }
-    if (isset($_POST['pagDarrera'])) {
-            $pagina = $_POST['numPagines'];
-    }
-    // echo($_POST['pagina']);
 
 ?>
 
@@ -76,39 +42,36 @@
     <title>Llista Autors</title>
 </head>
 <body>
-    <?php
-        $sql="SELECT ID_AUT, NOM_AUT FROM `autors`";
-        $where="";
-        if (isset($_POST['btnCercar'])) {
-            $valor = ($_POST['cercar']);
-            $where=" WHERE ID_AUT = '$valor' OR NOM_AUT LIKE '%$valor%'";
-        }
-        $orderBy=" ORDER BY $ordre"; // o hauria de ser " ORDER BY $POST['ordre']"?
-        $result = $mysqli->query($sql);
-        $numRegistres = mysqli_num_rows($result);
-        $numRegPag = 10;
-        $numPaginas = ceil($numRegistres/$numRegPag);
-        $iniciTuples = ($pagina - 1) * $numRegPag;
-        $limit = " LIMIT $iniciTuples , $numRegPag";
-        $sql=$sql.$where.$orderBy.$limit;
-        $result = $mysqli->query($sql);
-    ?>
     <form action="" method="post">
-        <input type="hidden" class="form-control" name="ordre" id="ordre" value="<?=$ordre?>">
-        <input type="hidden" class="form-control" name="pagina" id="pagina" value="<?=$pagina?>">
-        <input type="hidden" class="form-control" name="numPagines" id="numPagines" value="<?=$numPaginas?>">
+        <div class="form-group">
+        <input type="hidden" class="form-control" name="ordre" id="ordre" value="<?=$orderBy?>">
         <button name="ID_AUT_ASC" class="btn btn-primary">CODI ASC</button>
         <button name="ID_AUT_DESC" class="btn btn-primary">CODI DES</button>
         <button name="NOM_AUT_ASC" class="btn btn-primary">NOM ASC</button>
         <button name="NOM_AUT_DESC" class="btn btn-primary">NOM DES</button>
+        </div>
+        <div class="form-group">
         <label for="">Codi / Nom</label>
         <input type="text" class="form-control" name="cercar" id="cercar" aria-describedby="helpId" placeholder="Cerca">
         <button name="btnCercar" class="btn btn-primary">Buscar</button>
-        <button name="pagPrimera" class="btn btn-primary">Primera</button>
-        <button name="pagAnterior" class="btn btn-primary">Anterior</button>
-        <button name="pagSeguent" class="btn btn-primary">Seguent</button>
-        <button name="pagDarrera" class="btn btn-primary">Darrera</button>
+        </div>
     </form>
+    <!-- <form class="form-inline" action="" method="Post">
+        <div class="container-fluid">
+            <button name="ID_AUT_ASC" class="btn btn-primary">CODI ASC</button>
+            <button name="ID_AUT_DESC" class="btn btn-primary">CODI DES</button>
+            <button name="NOM_AUT_ASC" class="btn btn-primary">NOM ASC</button>
+            <button name="NOM_AUT_DESC" class="btn btn-primary">NOM DES</button>
+        </div>
+        <div class="container-fluid">
+            <label for="">Codi / Nom</label>
+            <input type="text" class="form-control" name="cercar" id="cercar" aria-describedby="helpId" placeholder="Cerca">
+            <button name="btnCercar" class="btn btn-primary">Buscar</button>
+        </div>
+        <div class="container-fluid">
+            <button name="btnSeguent" class="btn btn-primary">Seguent</button>
+        </div>
+    </form> -->
     <table class="table">
         <thead class="thead-dark">
             <tr>
@@ -122,24 +85,41 @@
         </thead>
         <tbody>
             <?php
+                $sql="SELECT ID_AUT, NOM_AUT FROM `autors`";
+                $where="";
+                $orderBy=" ORDER BY $orderBy";
+                if (isset($_POST['btnCercar'])) {
+                    $valor = ($_POST['cercar']);
+                    $where=" WHERE ID_AUT = '$valor' OR NOM_AUT LIKE '%$valor%'";
+                }
+                $sql=$sql.$where.$orderBy;
                 echo("<p>$sql</p>");
-                echo("<p> Pagina: $pagina");
-                echo(" / Num registres: $numRegistres");
-                echo(" / Num registres x pagina: $numRegPag");
-                echo(" / Num pagines: $numPaginas</p>");
+                $result = $mysqli->query($sql);
                 if ($result) {
+                    $pagina=0;  // del botón...
+                    $numRegPagina=10; // del select
+
+                    $dir=$pagina*$numRegPagina;
+                    $actual=0;
+                    $offset=0;
+                    $pagina = ceil($pagina/$numRegPagina);
+
                     while ($row = $result->fetch_assoc()) {
+                        if($actual>=$dir){
                             echo("<tr>");
                             echo("<th scope='row'>".$row["ID_AUT"]."</th>");
                             echo("<td>".$row["NOM_AUT"]."</td>");
                             echo("</tr>");
+                            $offset++;                        
+                            if($offset==$numRegPagina){
+                                break;
+                            }
+                        }
+                        $actual++;
                     }   
                     $result->free();
                 }
                 $mysqli->close();
-                if ($pagina >= $numPaginas) {
-                    $pagina = $numPaginas;
-                }
             ?>
         </tbody>
     </table>
