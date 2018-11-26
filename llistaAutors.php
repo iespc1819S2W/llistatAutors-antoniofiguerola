@@ -79,14 +79,15 @@
     <?php
         $sql="SELECT ID_AUT, NOM_AUT FROM `autors`";
         $where="";
-        if (isset($_POST['btnCercar'])) {
+        $valor = "";
+        $numRegPag = isset($_POST['numRegPag'])?$_POST['numRegPag']:20;
+        if (isset($_POST['cercar']) && $_POST['cercar'] != "") {
             $valor = ($_POST['cercar']);
             $where=" WHERE ID_AUT = '$valor' OR NOM_AUT LIKE '%$valor%'";
         }
         $orderBy=" ORDER BY $ordre"; // o hauria de ser " ORDER BY $POST['ordre']"?
-        $result = $mysqli->query($sql);
+        $result = $mysqli->query($sql.$where);
         $numRegistres = mysqli_num_rows($result);
-        $numRegPag = 10;
         $numPaginas = ceil($numRegistres/$numRegPag);
         $iniciTuples = ($pagina - 1) * $numRegPag;
         $limit = " LIMIT $iniciTuples , $numRegPag";
@@ -109,10 +110,19 @@
         </div>
         <div class="row">
             <div class="col-md-12 order-md-1">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-8 mb-3">
                     <label for="">Codi / Nom</label>
-                    <input type="text" name="cercar" id="cercar" placeholder="Cerca">
+                    <input type="text" name="cercar" id="cercar" placeholder="Cerca" value="<?=$valor?>">
                     <button name="btnCercar" class="btn btn-primary">Cercar</button>
+                    <label for="">Nombre de Registres x pagina</label>
+                    <select name="numRegPag" id="numRegPag">
+                        <option value="5" <?php if($numRegPag == 5) echo " selected";?>>5</option>
+                        <option value="10" <?php if($numRegPag == 10) echo " selected";?>>10</option>
+                        <option value="20" <?php if($numRegPag == 20) echo " selected";?>>20</option>
+                        <option value="30" <?php if($numRegPag == 30) echo " selected";?>>30</option>
+                        <option value="40" <?php if($numRegPag == 40) echo " selected";?>>40</option>
+                    </select>
+                    <button name="btnRegPag" class="btn btn-primary">Asignar</button>
                 </div>
             </div>
         </div>
@@ -140,11 +150,11 @@
         </thead>
         <tbody>
             <?php
-                echo("<p>$sql</p>");
-                echo("<p> Pagina: $pagina");
-                echo(" / Num registres: $numRegistres");
-                echo(" / Num registres x pagina: $numRegPag");
-                echo(" / Num pagines: $numPaginas</p>");
+                // echo("<p>$sql</p>");
+                // echo("<p> Pagina: $pagina");
+                // echo(" / Num registres: $numRegistres");
+                // echo(" / Num registres x pagina: $numRegPag");
+                // echo(" / Num pagines: $numPaginas</p>");
                 if ($result) {
                     while ($row = $result->fetch_assoc()) {
                             echo("<tr>");
