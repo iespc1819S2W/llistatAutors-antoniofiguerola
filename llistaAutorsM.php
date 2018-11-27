@@ -139,12 +139,16 @@
     <table class="table">
         <thead class="thead-dark">
             <tr>
-                <th scope="col"></th>
-                <th scope="col">BIBLIOTECA</th>
+                <!-- <th scope="col"></th>
+                <th scope="col"></th> -->
+                <th scope="col" colspan="4" style="text-align:center">BIBLIOTECA</th>
+                <!-- <th scope="col"></th> -->
             </tr>
             <tr>
                 <th scope="col">Identificador</th>
                 <th scope="col">Nom Complet</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -156,10 +160,12 @@
                 // echo(" / Num pagines: $numPaginas</p>");
                 if ($result) {
                     while ($row = $result->fetch_assoc()) {
-                            echo("<tr>");
-                            echo("<th scope='row'>".$row["ID_AUT"]."</th>");
-                            echo("<td>".$row["NOM_AUT"]."</td>");
-                            echo("</tr>");
+                        echo("<tr>");
+                        echo("<th scope='row'>".$row["ID_AUT"]."</th>");
+                        echo("<td>".$row["NOM_AUT"]."</td>");
+                        echo("<td><button name='editar' class='btn btn-success btn-sm'>Editar</button></td>");
+                        echo("<td><button name='borrar' class='btn btn-danger btn-sm'>Borrar</button></td>");
+                        echo("</tr>");
                     }   
                     $result->free();
                 }
