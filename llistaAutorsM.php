@@ -153,6 +153,7 @@
         </thead>
         <tbody>
             <?php
+            echo();
                 // echo("<p>$sql</p>"); // mostra per pantalla consulta sql i altre variables
                 // echo("<p> Pagina: $pagina");
                 // echo(" / Num registres: $numRegistres");
