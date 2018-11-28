@@ -73,17 +73,50 @@
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 		crossorigin="anonymous">
     <title>Llista Autors</title>
+    <script>
+        window.onload = function (){
+            document.getElementById("btnAfegir").onclick = function () {
+                document.getElementById("rowAfegir").style.display = "flex";
+            }
+            document.getElementById("btnAmagar").onclick = function () {
+                document.getElementById("rowAfegir").style.display = "none";
+            }
+        }
+    </script>
 </head>
 <body>
     <?php
+        // Insertar
+        if (isset($_POST['btnAfegir'])) {
+            $sqlMaxId = "SELECT MAX(ID_AUT) FROM autors";
+            $resultID = $mysqli->query($sqlMaxId);
+            if ($rowID = $resultID->fetch_row()) {
+                $id = $rowID[0];
+                $id++;
+            }
+            $nomAut = $mysqli->real_escape_string($_POST['afegir']);
+            $sqlInsert = "INSERT INTO autors(ID_AUT, NOM_AUT) VALUES ($id, '$nomAut')";
+            $resultInsert = $mysqli->query($sqlInsert);
+            $ordre = "ID_AUT DESC";
+        }
+        // Borrar
+        if (isset($_POST['btnBorrar'])) {
+            $idBorrar = $_POST['btnBorrar'];
+            $sqlBorrar = "DELETE FROM autors WHERE ID_AUT = $idBorrar";
+            $mysqli->query($sqlBorrar);
+            $ordre = "ID_AUT DESC";
+        }
+        // Consulta
         $sql="SELECT ID_AUT, NOM_AUT FROM `autors`";
         $where="";
         $valor = "";
         $numRegPag = isset($_POST['numRegPag'])?$_POST['numRegPag']:20;
+        // Cercar
         if (isset($_POST['cercar']) && $_POST['cercar'] != "") {
-            $valor = ($_POST['cercar']);
+            $valor = $mysqli->real_escape_string($_POST['cercar']);
             $where=" WHERE ID_AUT = '$valor' OR NOM_AUT LIKE '%$valor%'";
         }
+        // Consulta paginacio
         $orderBy=" ORDER BY $ordre"; 
         $result = $mysqli->query($sql.$where);
         $numRegistres = mysqli_num_rows($result);
@@ -92,6 +125,8 @@
         $limit = " LIMIT $iniciTuples , $numRegPag";
         $sql=$sql.$where.$orderBy.$limit;
         $result = $mysqli->query($sql);
+        
+
     ?>
     <form action="" method="post">
         <input type="hidden" class="form-control" name="ordre" id="ordre" value="<?=$ordre?>">
@@ -135,6 +170,22 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 order-md-1">
+                <div class="col-md-6 mb-3">
+                    <button type="button" id="btnAfegir" name="btnAfegir" class="btn btn-primary">+</button>
+                    <button type="button" id="btnAmagar" name="btnAmagar" class="btn btn-primary">^</button>
+                </div>
+            </div>
+        </div>
+        <div id="rowAfegir" class="row" style="display:none">
+            <div class="col-md-12 order-md-1">
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="afegir" id="afegir" placeholder="LLINATGES, NOM">
+                    <button name="btnAfegir" class="btn btn-primary">Afegir</button>
+                </div>
+            </div>
+        </div>
     </form>
     <table class="table">
         <thead class="thead-dark">
@@ -152,29 +203,30 @@
             </tr>
         </thead>
         <tbody>
-            <?php
-            echo();
-                // echo("<p>$sql</p>"); // mostra per pantalla consulta sql i altre variables
-                // echo("<p> Pagina: $pagina");
-                // echo(" / Num registres: $numRegistres");
-                // echo(" / Num registres x pagina: $numRegPag");
-                // echo(" / Num pagines: $numPaginas</p>");
-                if ($result) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo("<tr>");
-                        echo("<th scope='row'>".$row["ID_AUT"]."</th>");
-                        echo("<td>".$row["NOM_AUT"]."</td>");
-                        echo("<td><button name='editar' class='btn btn-success btn-sm'>Editar</button></td>");
-                        echo("<td><button name='borrar' class='btn btn-danger btn-sm'>Borrar</button></td>");
-                        echo("</tr>");
-                    }   
-                    $result->free();
-                }
-                $mysqli->close();
-                if ($pagina >= $numPaginas) {
-                    $pagina = $numPaginas;
-                }
-            ?>
+            <form action="" method="POST">
+                <?php
+                    // echo("<p>$sql</p>"); // mostra per pantalla consulta sql i altre variables
+                    // echo("<p> Pagina: $pagina");
+                    // echo(" / Num registres: $numRegistres");
+                    // echo(" / Num registres x pagina: $numRegPag");
+                    // echo(" / Num pagines: $numPaginas</p>");
+                    if ($result) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo("<tr>");
+                            echo("<th scope='row'>".$row["ID_AUT"]."</th>");
+                            echo("<td>".$row["NOM_AUT"]."</td>");
+                            echo("<td><button name='btnEditar' class='btn btn-success btn-sm' value='{$row["ID_AUT"]}'>Editar</button></td>");
+                            echo("<td><button name='btnBorrar' class='btn btn-danger btn-sm' value='{$row["ID_AUT"]}'>Borrar</button></td>");
+                            echo("</tr>");
+                        }   
+                        $result->free();
+                    }
+                    $mysqli->close();
+                    if ($pagina >= $numPaginas) {
+                        $pagina = $numPaginas;
+                    }
+                ?>
+            </form>
         </tbody>
     </table>
 </body>
