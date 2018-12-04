@@ -1,5 +1,5 @@
 <?php
-
+    // print_r($_POST);
     $mysqli = new mysqli();
     $servidor = "127.0.0.1";
     $usuario = "root";
@@ -81,6 +81,9 @@
             document.getElementById("btnAmagar").onclick = function () {
                 document.getElementById("rowAfegir").style.display = "none";
             }
+            document.getElementById("btnEditar").onclick = function () {
+                document.getElementById("btnCancelar").style.display = "";
+            }
         }
     </script>
 </head>
@@ -104,10 +107,23 @@
             $idBorrar = $_POST['btnBorrar'];
             $sqlBorrar = "DELETE FROM autors WHERE ID_AUT = $idBorrar";
             $mysqli->query($sqlBorrar);
-            $ordre = "ID_AUT DESC";
+            // $ordre = "ID_AUT DESC";
+        }
+        // Editar
+        $idEditar = 0;
+        if (isset($_POST['btnEditar'])) {
+            $idEditar = $_POST['btnEditar'];
+        }
+        // Guardar x editar
+        if (isset($_POST['btnGuardar'])) {
+            $idguardar = $_POST['btnGuardar'];
+            $valorGuardar = $_POST['nouValor'];
+            $sqlEditar = "UPDATE `autors` SET `NOM_AUT` = '$valorGuardar' WHERE `ID_AUT` = $idguardar";
+            $mysqli -> query($sqlEditar);
+            // echo("<p>$sqlEditar</p>");
         }
         // Consulta
-        $sql="SELECT ID_AUT, NOM_AUT FROM `autors`";
+        $sql="SELECT ID_AUT, NOM_AUT, FK_NACIONALITAT FROM `autors`";
         $where="";
         $valor = "";
         $numRegPag = isset($_POST['numRegPag'])?$_POST['numRegPag']:20;
@@ -186,37 +202,98 @@
                 </div>
             </div>
         </div>
-    </form>
+    <!-- </form> -->
     <table class="table">
         <thead class="thead-dark">
             <tr>
                 <!-- <th scope="col"></th>
                 <th scope="col"></th> -->
-                <th scope="col" colspan="4" style="text-align:center">BIBLIOTECA</th>
+                <th scope="col" colspan="5" style="text-align:center">BIBLIOTECA</th>
                 <!-- <th scope="col"></th> -->
             </tr>
             <tr>
                 <th scope="col">Identificador</th>
                 <th scope="col">Nom Complet</th>
+                <th scope="col">Nacionalitat</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
-            <form action="" method="POST">
+            <!-- <form action="" method="POST"> -->
                 <?php
                     // echo("<p>$sql</p>"); // mostra per pantalla consulta sql i altre variables
                     // echo("<p> Pagina: $pagina");
                     // echo(" / Num registres: $numRegistres");
                     // echo(" / Num registres x pagina: $numRegPag");
                     // echo(" / Num pagines: $numPaginas</p>");
+                    // echo($ordre);
                     if ($result) {
                         while ($row = $result->fetch_assoc()) {
                             echo("<tr>");
                             echo("<th scope='row'>".$row["ID_AUT"]."</th>");
-                            echo("<td>".$row["NOM_AUT"]."</td>");
-                            echo("<td><button name='btnEditar' class='btn btn-success btn-sm' value='{$row["ID_AUT"]}'>Editar</button></td>");
-                            echo("<td><button name='btnBorrar' class='btn btn-danger btn-sm' value='{$row["ID_AUT"]}'>Borrar</button></td>");
+                            if ($idEditar == $row["ID_AUT"]) {
+                                echo ('<td><input style="width:400px" type="text" name="nouValor" id="nouValor" placeholder="'.$row["NOM_AUT"].'" value="'.$row["NOM_AUT"].'"></td>');
+                                // echo('<select name="'.$nom.'" id="'.$nom.'" >');
+                                // echo ('<td>');
+                                // echo('<select name="nacionalitat" id="nacionalitat" >');
+                                // echo('<option value=" "> </option>');
+                                // $sqlNacionalitats="SELECT * FROM `nacionalitats`";
+                                // $resultNacionalitats = $mysqli->query($sqlNacionalitats);
+                                // if ($resultNacionalitats) {
+                                //     while ($row = $resultNacionalitats->fetch_assoc()) {
+                                //         echo('<option value="'.$row["NACIONALITAT"].'">'.$row["NACIONALITAT"].'</option>');
+                                //     }
+                                //     $resultNacionalitats->free();
+                                // }
+                                // // foreach ($array as $clau => $valor) {
+                                // //     echo('<option value="'.$clau.'">'.$valor.'</option>');
+                                // // }
+                                // echo("</select>");
+                                // echo("</td>");
+                                // select options nacionalitats
+                                    // <select class="form-control" id="numGermans" name="numGermans">
+                                    //     <option>0</option>
+                                    //     <option>1</option>
+                                    //     <option>2</option>
+                                    //     <option>3</option>
+                                    //     <option>4</option>
+                                    //     <option>5</option>
+                                    //     <option>6</option>
+                                    // </select>
+                            } else {
+                                echo("<td>".$row["NOM_AUT"]."</td>");
+                            }
+                            if ($idEditar == $row["ID_AUT"]) {
+                                echo ('<td>');
+                                echo('<select name="nacionalitat" id="nacionalitat" >');
+                                echo('<option value=" "> </option>');
+                                $sqlNacionalitats="SELECT * FROM `nacionalitats`";
+                                $resultNacionalitats = $mysqli->query($sqlNacionalitats);
+                                if ($resultNacionalitats) {
+                                    while ($row = $resultNacionalitats->fetch_assoc()) {
+                                        echo('<option value="'.$row["NACIONALITAT"].'">'.$row["NACIONALITAT"].'</option>');
+                                    }
+                                    $resultNacionalitats->free();
+                                }
+                                // foreach ($array as $clau => $valor) {
+                                //     echo('<option value="'.$clau.'">'.$valor.'</option>');
+                                // }
+                                echo("</select>");
+                                echo("</td>");
+                            } else {
+                                echo("<td>".$row["FK_NACIONALITAT"]."</td>");
+                            }
+                            if ($idEditar == $row["ID_AUT"]) {
+                                echo("<td><button name='btnGuardar' class='btn btn-success btn-sm' value='{$row["ID_AUT"]}'>Guardar</button></td>");
+                            } else {
+                                echo("<td><button id='btnEditar' name='btnEditar' class='btn btn-success btn-sm' value='{$row["ID_AUT"]}'>Editar</button></td>");
+                            }
+                            if ($idEditar == $row["ID_AUT"]) {
+                                echo("<td><button id='btnCancelar' name='btnCancelar' class='btn btn-danger btn-sm' value='{$row["ID_AUT"]}'>Cancelar</button></td>");
+                            } else {
+                                echo("<td><button name='btnBorrar' class='btn btn-danger btn-sm' value='{$row["ID_AUT"]}'>Borrar</button></td>");
+                            }
                             echo("</tr>");
                         }   
                         $result->free();
