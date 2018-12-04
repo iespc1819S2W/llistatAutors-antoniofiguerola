@@ -233,34 +233,7 @@
                             echo("<tr>");
                             echo("<th scope='row'>".$row["ID_AUT"]."</th>");
                             if ($idEditar == $row["ID_AUT"]) {
-                                echo ('<td><input style="width:400px" type="text" name="nouValor" id="nouValor" placeholder="'.$row["NOM_AUT"].'" value="'.$row["NOM_AUT"].'"></td>');
-                                // echo('<select name="'.$nom.'" id="'.$nom.'" >');
-                                // echo ('<td>');
-                                // echo('<select name="nacionalitat" id="nacionalitat" >');
-                                // echo('<option value=" "> </option>');
-                                // $sqlNacionalitats="SELECT * FROM `nacionalitats`";
-                                // $resultNacionalitats = $mysqli->query($sqlNacionalitats);
-                                // if ($resultNacionalitats) {
-                                //     while ($row = $resultNacionalitats->fetch_assoc()) {
-                                //         echo('<option value="'.$row["NACIONALITAT"].'">'.$row["NACIONALITAT"].'</option>');
-                                //     }
-                                //     $resultNacionalitats->free();
-                                // }
-                                // // foreach ($array as $clau => $valor) {
-                                // //     echo('<option value="'.$clau.'">'.$valor.'</option>');
-                                // // }
-                                // echo("</select>");
-                                // echo("</td>");
-                                // select options nacionalitats
-                                    // <select class="form-control" id="numGermans" name="numGermans">
-                                    //     <option>0</option>
-                                    //     <option>1</option>
-                                    //     <option>2</option>
-                                    //     <option>3</option>
-                                    //     <option>4</option>
-                                    //     <option>5</option>
-                                    //     <option>6</option>
-                                    // </select>
+                                echo ('<td><input style="width:300px" type="text" name="nouValor" id="nouValor" placeholder="'.$row["NOM_AUT"].'" value="'.$row["NOM_AUT"].'"></td>');
                             } else {
                                 echo("<td>".$row["NOM_AUT"]."</td>");
                             }
