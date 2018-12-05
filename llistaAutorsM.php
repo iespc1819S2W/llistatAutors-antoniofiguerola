@@ -99,6 +99,7 @@
                 $id++;
             }
             $nomAut = $mysqli->real_escape_string($_POST['afegir']);
+            $nacionalitatNouRegistre = $mysqli->real_escape_string($_POST['afegir']);
             $sqlInsert = "INSERT INTO autors(ID_AUT, NOM_AUT) VALUES ($id, '$nomAut')";
             $resultInsert = $mysqli->query($sqlInsert);
             $ordre = "ID_AUT DESC";
@@ -199,6 +200,9 @@
             <div class="col-md-12 order-md-1">
                 <div class="col-md-6 mb-3">
                     <input type="text" name="afegir" id="afegir" placeholder="LLINATGES, NOM">
+                    <!-- <?php
+                        montarSelect($mysqli,$sql,"nacionalitat","nacionalitat","nacionalitat",$nacionalitat);
+                    ?> -->
                     <button name="btnAfegir" class="btn btn-primary">Afegir</button>
                 </div>
             </div>
@@ -239,7 +243,6 @@
                                 echo("<td>".$row["NOM_AUT"]."</td>");
                             }
                             if ($idEditar == $row["ID_AUT"]) {
-                                // echo ('<input type="hidden" name="nacionalitat" id="nacionalitat" placeholder="'.$row["FK_NACIONALITAT"].'" value="'.$row["FK_NACIONALITAT"].'">');
                                 $nacionalitat = $row["FK_NACIONALITAT"];
                                 echo ('<td>');
                                 $sql = 'SELECT nacionalitat FROM `nacionalitats`';
