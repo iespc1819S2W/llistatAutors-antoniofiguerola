@@ -1,5 +1,6 @@
 <?php
     // print_r($_POST);
+    require_once("./funcions.php");
     $mysqli = new mysqli();
     $servidor = "127.0.0.1";
     $usuario = "root";
@@ -238,21 +239,11 @@
                                 echo("<td>".$row["NOM_AUT"]."</td>");
                             }
                             if ($idEditar == $row["ID_AUT"]) {
+                                // echo ('<input type="hidden" name="nacionalitat" id="nacionalitat" placeholder="'.$row["FK_NACIONALITAT"].'" value="'.$row["FK_NACIONALITAT"].'">');
+                                $nacionalitat = $row["FK_NACIONALITAT"];
                                 echo ('<td>');
-                                echo('<select name="nacionalitat" id="nacionalitat" >');
-                                echo('<option value=" "> </option>');
-                                $sqlNacionalitats="SELECT * FROM `nacionalitats`";
-                                $resultNacionalitats = $mysqli->query($sqlNacionalitats);
-                                if ($resultNacionalitats) {
-                                    while ($row = $resultNacionalitats->fetch_assoc()) {
-                                        echo('<option value="'.$row["NACIONALITAT"].'">'.$row["NACIONALITAT"].'</option>');
-                                    }
-                                    $resultNacionalitats->free();
-                                }
-                                // foreach ($array as $clau => $valor) {
-                                //     echo('<option value="'.$clau.'">'.$valor.'</option>');
-                                // }
-                                echo("</select>");
+                                $sql = 'SELECT nacionalitat FROM `nacionalitats`';
+                                montarSelect($mysqli,$sql,"nacionalitat","nacionalitat","nacionalitat",$nacionalitat);
                                 echo("</td>");
                             } else {
                                 echo("<td>".$row["FK_NACIONALITAT"]."</td>");
