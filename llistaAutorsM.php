@@ -99,8 +99,8 @@
                 $id++;
             }
             $nomAut = $mysqli->real_escape_string($_POST['afegir']);
-            $nacionalitatNouRegistre = $mysqli->real_escape_string($_POST['afegir']);
-            $sqlInsert = "INSERT INTO autors(ID_AUT, NOM_AUT) VALUES ($id, '$nomAut')";
+            $nacionalitatNouRegistre = $_POST['nacionalitatNou'];
+            $sqlInsert = "INSERT INTO autors(ID_AUT, NOM_AUT, FK_NACIONALITAT) VALUES ($id, '$nomAut', '$nacionalitatNouRegistre')";
             $resultInsert = $mysqli->query($sqlInsert);
             $ordre = "ID_AUT DESC";
         }
@@ -120,9 +120,12 @@
         if (isset($_POST['btnGuardar'])) {
             $idguardar = $_POST['btnGuardar'];
             $valorGuardar = $_POST['nouValor'];
-            $sqlEditar = "UPDATE `autors` SET `NOM_AUT` = '$valorGuardar' WHERE `ID_AUT` = $idguardar";
+            $nacionalitatGuardar = $_POST['nacionalitat'];
+            $sqlEditar = "UPDATE `autors` SET `NOM_AUT` = '$valorGuardar', `FK_NACIONALITAT` = '$nacionalitatGuardar' WHERE `ID_AUT` = $idguardar";
+            if ($_POST['nacionalitat'] == "") {
+                $sqlEditar = "UPDATE `autors` SET `NOM_AUT` = '$valorGuardar', `FK_NACIONALITAT` = null WHERE `ID_AUT` = $idguardar";
+            }
             $mysqli -> query($sqlEditar);
-            // echo("<p>$sqlEditar</p>");
         }
         // Consulta
         $sql="SELECT ID_AUT, NOM_AUT, FK_NACIONALITAT FROM `autors`";
@@ -200,9 +203,10 @@
             <div class="col-md-12 order-md-1">
                 <div class="col-md-6 mb-3">
                     <input type="text" name="afegir" id="afegir" placeholder="LLINATGES, NOM">
-                    <!-- <?php
-                        montarSelect($mysqli,$sql,"nacionalitat","nacionalitat","nacionalitat",$nacionalitat);
-                    ?> -->
+                    <?php
+                        $sqlnacionalitat = 'SELECT nacionalitat FROM `nacionalitats`';
+                        montarSelect($mysqli,$sqlnacionalitat,"nacionalitat","nacionalitat","nacionalitatNou");
+                    ?>
                     <button name="btnAfegir" class="btn btn-primary">Afegir</button>
                 </div>
             </div>
